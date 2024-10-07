@@ -38,3 +38,4 @@ build/
 .DS_Store
 /.idea
 src/main/resources/config/openweathermap_API_key.txt
+src/main/resources/config/telegram_API_key.txt

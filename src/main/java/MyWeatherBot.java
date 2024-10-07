@@ -1,12 +1,17 @@
-import api.weather.OpenMeteoAPI;
-import api.weather.OpenWeatherMapAPI;
-import api.weather.WeatherAPI;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+import telegram.TelegramBot;
 
 public class MyWeatherBot {
     public static void main(String[] args) {
-        WeatherAPI weatherAPI = new OpenWeatherMapAPI();
-        WeatherAPI weatherAPI2 = new OpenMeteoAPI();
-        System.out.println(weatherAPI2.getWeather("Saint Petersburg"));
-//        System.out.println(weatherAPI.getWeather("Saint Petersburg"));
+//        Запуск бота
+        try {
+            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+            botsApi.registerBot(new TelegramBot());
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+
     }
 }
