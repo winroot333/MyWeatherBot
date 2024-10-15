@@ -10,4 +10,6 @@ public class GeocodingResponse {
     Double longitude;
     Double latitude;
     String city;
+    String country;
+    long cityId;
 }

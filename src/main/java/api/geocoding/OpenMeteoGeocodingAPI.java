@@ -5,6 +5,7 @@ import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
@@ -39,6 +40,8 @@ public class OpenMeteoGeocodingAPI {
                     .city(json.getString("name"))
                     .longitude(json.getDouble("longitude"))
                     .latitude(json.getDouble("latitude"))
+                    .country(json.getString("country"))
+                    .cityId(json.getLong("id"))
                     .build());
         } else
             return Optional.empty();

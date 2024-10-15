@@ -29,10 +29,8 @@ public class CommandHandler {
                 return getFormattedWeatherString(weather);
             case "/subscribe":
                 return "";
-
             default:
                 return "Команда не найдена";
-
         }
     }
 
@@ -42,7 +40,7 @@ public class CommandHandler {
         }
         String str = "%s\n%s %2.1f C\nВлажность %2.0f%%\nВетер %s м/с\nПорывы %s м/с";
         TemperatureData temperature = weather.getTemperature();
-        return str.formatted(weather.getCity(), temperature.getDescription(), temperature.getTemperature(), temperature.getHumidity(), temperature.getWindSpeed(), temperature.getWindGusts());
+        return str.formatted(weather.getGeocoding().getCity(), temperature.getDescription(), temperature.getTemperature(), temperature.getHumidity(), temperature.getWindSpeed(), temperature.getWindGusts());
     }
 
     public static String getResponse(String messageText) {

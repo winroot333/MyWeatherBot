@@ -2,7 +2,7 @@ package api.weather;
 
 import api.APIRequestHandler;
 import api.geocoding.GeocodingResponse;
-import api.geocoding.OpenMeteoGeocodingAPI;
+import api.geocoding.GeocodingService;
 import api.weather.response.TemperatureData;
 import api.weather.response.WeatherResponse;
 import org.apache.http.client.HttpResponseException;
@@ -21,7 +21,7 @@ public class OpenMeteoAPI extends WeatherAPI {
     @Override
     public WeatherResponse getWeather(String city) {
         try {
-            Optional<GeocodingResponse> geocoding = OpenMeteoGeocodingAPI.getGeocoding(city);
+            Optional<GeocodingResponse> geocoding = GeocodingService.getGeocoding(city);
             if (geocoding.isEmpty())
                 return new WeatherResponse("Город не найден");
             cityName = geocoding.get().getCity();
@@ -38,7 +38,7 @@ public class OpenMeteoAPI extends WeatherAPI {
                     .build();
 
             String response = APIRequestHandler.request(uri);
-            return parseApiResponse(response);
+            return parseApiResponse(response, geocoding.get());
 
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
@@ -47,7 +47,7 @@ public class OpenMeteoAPI extends WeatherAPI {
         }
     }
 
-    private WeatherResponse parseApiResponse(String response) {
+    private WeatherResponse parseApiResponse(String response, GeocodingResponse geocodingResponse) {
         JSONObject jsonObject = new JSONObject(response);
 
         var current = jsonObject.getJSONObject("current");
@@ -59,7 +59,7 @@ public class OpenMeteoAPI extends WeatherAPI {
         var weatherDescription = getDescriptionFromWmoCode(weatherCode, true);
 
         return WeatherResponse.builder()
-                .city(cityName)
+                .geocoding(geocodingResponse)
                 .temperature(TemperatureData.builder()
                         .temperature(temperature)
                         .windSpeed(windSpeed)
