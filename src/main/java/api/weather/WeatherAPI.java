@@ -1,5 +1,6 @@
 package api.weather;
 
+import api.weather.response.WeatherResponse;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -7,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public abstract class WeatherAPI {
-    public abstract String getWeather(String city);
+    public abstract WeatherResponse getWeather(String city);
 
     protected String getDescriptionFromWmoCode(int code, boolean day) {
         String wmoJsonPath = "src/main/resources/wmo_weather_codes.json";

@@ -35,10 +35,10 @@ public class OpenMeteoGeocodingAPI {
         if (json.has("results")) {
 
             json = json.getJSONArray("results").getJSONObject(0);
-            return Optional.of(new GeocodingResponse.Builder()
-                    .setCity(json.getString("name"))
-                    .setLongitude(json.getDouble("longitude"))
-                    .setLatitude(json.getDouble("latitude"))
+            return Optional.of(GeocodingResponse.builder()
+                    .city(json.getString("name"))
+                    .longitude(json.getDouble("longitude"))
+                    .latitude(json.getDouble("latitude"))
                     .build());
         } else
             return Optional.empty();

@@ -3,32 +3,30 @@ package telegram;
 import api.weather.OpenMeteoAPI;
 import api.weather.OpenWeatherMapAPI;
 import api.weather.WeatherAPI;
+import api.weather.response.TemperatureData;
+import api.weather.response.WeatherResponse;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class CommandHandler {
 
-    static String[] parse(String message) {
-        if (message.startsWith("/")) {
-            return message.split(" ");
-        }
-        return null;
-    }
-
-
-    static String handle(String[] args) {
-        if (args == null || args.length == 0) {
+    private static String handle(String commandString) {
+        if (commandString == null || commandString.isEmpty()) {
             return "Команда не найдена";
         }
 
-        String command = args[0].toLowerCase();
+        String command = commandString.toLowerCase().split(" ")[0];
+        String arguments = Arrays.stream(commandString.split(" "))
+                .skip(1)
+                .collect(Collectors.joining(" "));
+
         WeatherAPI weatherAPI = new OpenMeteoAPI();
 
-            switch (command) {
+        switch (command) {
             case "/weather":
-                return weatherAPI.getWeather(Arrays.stream(args).skip(1).collect(Collectors.joining(" ")));
-
+                WeatherResponse weather = weatherAPI.getWeather(arguments);
+                return getFormattedWeatherString(weather);
             case "/subscribe":
                 return "";
 
@@ -38,9 +36,16 @@ public class CommandHandler {
         }
     }
 
-    public static String getResponse(String messageText) {
-        String[] args = parse(messageText);
+    private static String getFormattedWeatherString(WeatherResponse weather) {
+        if (weather.getError() != null) {
+            return weather.getError();
+        }
+        String str = "%s\n%s %2.1f C\nВлажность %2.0f%%\nВетер %s м/с\nПорывы %s м/с";
+        TemperatureData temperature = weather.getTemperature();
+        return str.formatted(weather.getCity(), temperature.getDescription(), temperature.getTemperature(), temperature.getHumidity(), temperature.getWindSpeed(), temperature.getWindGusts());
+    }
 
-        return handle(args);
+    public static String getResponse(String messageText) {
+        return handle(messageText);
     }
 }

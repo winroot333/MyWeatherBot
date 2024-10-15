@@ -1,29 +1,28 @@
 package api.weather;
 
 import api.APIRequestHandler;
+import api.weather.response.TemperatureData;
+import api.weather.response.WeatherResponse;
 import config.Config;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class OpenWeatherMapAPI extends WeatherAPI {
-    private static final String API_URL = "https://api.open-meteo.com/v1/forecast";
+    private final String API_URL = "https://api.openweathermap.org/data/2.5/weather";
     private final String API_KEY;
 
     public OpenWeatherMapAPI() {
         API_KEY = getApiKey();
     }
 
-    //    @Override
-    public String getWeather(String city) {
+    @Override
+    public WeatherResponse getWeather(String city) {
         try {
-            URI uri = new URIBuilder("https://api.openweathermap.org/data/2.5/weather")
+            URI uri = new URIBuilder(API_URL)
                     .addParameter("q", city)
                     .addParameter("appid", API_KEY)
                     .addParameter("units", "metric")
@@ -33,13 +32,13 @@ public class OpenWeatherMapAPI extends WeatherAPI {
             return parseApiResponse(response);
 
         } catch (HttpResponseException e) {
-            return e.getMessage();
+            return new WeatherResponse(e.getMessage());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String parseApiResponse(String response) {
+    private WeatherResponse parseApiResponse(String response) {
         JSONObject jsonObject = new JSONObject(response);
         String city = jsonObject.getString("name");
         double temperature = jsonObject.getJSONObject("main").getDouble("temp");
@@ -47,7 +46,12 @@ public class OpenWeatherMapAPI extends WeatherAPI {
         double windSpeed = jsonObject.getJSONObject("wind").getDouble("speed");
         double windDegrees = jsonObject.getJSONObject("wind").getDouble("deg");
 
-        return "%s\n%2.1f C\n Влажность %2.0f\nВетер %s м/с".formatted(city, temperature, humidity, windSpeed);
+        return WeatherResponse.builder()
+                .temperature(TemperatureData.builder()
+                        .temperature(temperature)
+                        .windSpeed(windSpeed)
+                        .build())
+                .build();
     }
 
     private String getApiKey() {
