@@ -1,0 +1,394 @@
+{
+  "0": {
+    "day": {
+      "description": {
+        "en": "Sunny",
+        "ru": "Солнечно"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Clear",
+        "ru": "Ясно"
+      }
+    }
+  },
+  "1": {
+    "day": {
+      "description": {
+        "en": "Mainly Sunny",
+        "ru": "В основном солнечно"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Mainly Clear",
+        "ru": "В основном ясно"
+      }
+    }
+  },
+  "2": {
+    "day": {
+      "description": {
+        "en": "Partly Cloudy",
+        "ru": "Частично облачно"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Partly Cloudy",
+        "ru": "Частично облачно"
+      }
+    }
+  },
+  "3": {
+    "day": {
+      "description": {
+        "en": "Cloudy",
+        "ru": "Облачно"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Cloudy",
+        "ru": "Облачно"
+      }
+    }
+  },
+  "45": {
+    "day": {
+      "description": {
+        "en": "Foggy",
+        "ru": "Туманно"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Foggy",
+        "ru": "Туманно"
+      }
+    }
+  },
+  "48": {
+    "day": {
+      "description": {
+        "en": "Rime Fog",
+        "ru": "Иней"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Rime Fog",
+        "ru": "Иней"
+      }
+    }
+  },
+  "51": {
+    "day": {
+      "description": {
+        "en": "Light Drizzle",
+        "ru": "Нежный дождь"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Light Drizzle",
+        "ru": "Нежный дождь"
+      }
+    }
+  },
+  "53": {
+    "day": {
+      "description": {
+        "en": "Drizzle",
+        "ru": "Дождь"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Drizzle",
+        "ru": "Дождь"
+      }
+    }
+  },
+  "55": {
+    "day": {
+      "description": {
+        "en": "Heavy Drizzle",
+        "ru":"Сильный дождь"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Heavy Drizzle",
+        "ru":"Сильный дождь"
+      }
+    }
+  },
+  "56":{
+    "day":{
+      "description":{
+        "en":"Light Freezing Drizzle",
+        "ru":"Легкий замерзающий дождь"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Light Freezing Drizzle",
+        "ru":"Легкий замерзающий дождь"
+      }
+    }
+  },
+  "57":{
+    "day":{
+      "description":{
+        "en":"Freezing Drizzle",
+        "ru":"Замерзающий дождь"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Freezing Drizzle",
+        "ru":"Замерзающий дождь"
+      }
+    }
+  },
+  "61":{
+    "day":{
+      "description":{
+        "en":"Light Rain",
+        "ru":"Легкий дождь"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Light Rain",
+        "ru":"Легкий дождь"
+      }
+    }
+  },
+  "63":{
+    "day":{
+      "description":{
+        "en":"Rain",
+        "ru":"Дождь"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Rain",
+        "ru":"Дождь"
+      }
+    }
+  },
+  "65":{
+    "day":{
+      "description":{
+        "en":"Heavy Rain",
+        "ru":"Сильный дождь"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Heavy Rain",
+        "ru":"Сильный дождь"
+      }
+    }
+  },
+  "66":{
+    "day":{
+      "description":{
+        "en":"Light Freezing Rain",
+        "ru":"Легкий замерзающий дождь"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Light Freezing Rain",
+        "ru":"Легкий замерзающий дождь"
+      }
+    }
+  },
+  "67":{
+    "day":{
+      "description":{
+        "en":"Freezing Rain",
+        "ru":"Замерзающий дождь"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Freezing Rain",
+        "ru":"Замерзающий дождь"
+      }
+    }
+  },
+  "71":{
+    "day":{
+      "description":{
+        "en":"Light Snow",
+        "ru":"Легкий снег"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Light Snow",
+        "ru":"Легкий снег"
+      }
+    }
+  },
+  "73":{
+    "day":{
+      "description":{
+        "en":"Snow",
+        "ru":"Снег"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Snow",
+        "ru":"Снег"
+      }
+    }
+  },
+  "75":{
+    "day":{
+      "description":{
+        "en":"Heavy Snow",
+        "ru":"Сильный снег"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Heavy Snow",
+        "ru":"Сильный снег"
+      }
+    }
+  },
+  "77":{
+    "day":{
+      "description":{
+        "en":"Snow Grains",
+        "ru":"Снежные крупинки"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Snow Grains",
+        "ru":"Снежные крупинки"
+      }
+    }
+  },
+  "80":{
+    "day":{
+      "description":{
+        "en":"Light Showers",
+        "ru":"Легкие дожди"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Light Showers",
+        "ru":"Легкие дожди"
+      }
+    }
+  },
+  "81":{
+    "day":{
+      "description":{
+        "en":"Showers",
+        "ru":"Дожди"
+      }
+    },
+    "night":{
+      "description":{
+        "en":"Showers",
+        "ru":"Дожди"
+      }
+    }
+  },
+  "82":{
+    "day":{
+      "description":{
+        "en":"Heavy Showers",
+        "ru": "Сильные дожди"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Heavy Showers",
+        "ru": "Сильные дожди"
+      }
+    }
+  },
+  "85": {
+    "day": {
+      "description": {
+        "en": "Light Snow Showers",
+        "ru": "Легкие снежные дожди"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Light Snow Showers",
+        "ru": "Легкие снежные дожди"
+      }
+    }
+  },
+  "86": {
+    "day": {
+      "description": {
+        "en": "Snow Showers",
+        "ru": "Снежные дожди"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Snow Showers",
+        "ru": "Снежные дожди"
+      }
+    }
+  },
+  "95": {
+    "day": {
+      "description": {
+        "en": "Thunderstorm",
+        "ru": "Гроза"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Thunderstorm",
+        "ru": "Гроза"
+      }
+    }
+  },
+  "96": {
+    "day": {
+      "description": {
+        "en": "Light Thunderstorms With Hail",
+        "ru": "Легкие грозы с градом"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Light Thunderstorms With Hail",
+        "ru": "Легкие грозы с градом"
+      }
+    }
+  },
+  "99": {
+    "day": {
+      "description": {
+        "en": "Thunderstorm With Hail",
+        "ru": "Гроза с градом"
+      }
+    },
+    "night": {
+      "description": {
+        "en": "Thunderstorm With Hail",
+        "ru": "Гроза с градом"
+      }
+    }
+  }
+}

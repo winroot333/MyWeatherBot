@@ -1,6 +1,7 @@
 package api.weather;
 
 import api.APIRequestHandler;
+import config.Config;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
@@ -11,7 +12,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class OpenWeatherMapAPI implements WeatherAPI {
+public class OpenWeatherMapAPI extends WeatherAPI {
     private static final String API_URL = "https://api.open-meteo.com/v1/forecast";
     private final String API_KEY;
 
@@ -50,14 +51,7 @@ public class OpenWeatherMapAPI implements WeatherAPI {
     }
 
     private String getApiKey() {
-        String keyPath = "src/main/resources/config/openweathermap_API_key.txt";
-        String key = "";
-        try {
-            key = Files.readString(Path.of(keyPath));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return key;
+        return Config.getProperty("api.openweathermap");
     }
 
 }

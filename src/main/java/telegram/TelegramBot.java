@@ -1,5 +1,6 @@
 package telegram;
 
+import config.Config;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -9,18 +10,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+
 public class TelegramBot extends TelegramLongPollingBot {
 
-    private final String BOT_USER_NAME = "MyWeather_31bot";
+    private final String BOT_USER_NAME;
     private final String TOKEN;
-    private final String TOKEN_PATH = "src/main/resources/config/telegram_API_key.txt";
 
     public TelegramBot() {
-        try {
-            TOKEN = Files.readString(Path.of(TOKEN_PATH));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        TOKEN = Config.getProperty("telegram.apikey");
+        BOT_USER_NAME = Config.getProperty("telegram.username");
     }
 
     @Override
