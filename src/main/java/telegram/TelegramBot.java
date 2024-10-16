@@ -77,6 +77,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         execute(message);
     }
 
+    //TODO сделать кнопки прогноза погоды по часам, по 15мин, на 5 дней
+    //TODO автообновление прогноза погоды в чате
     @SneakyThrows
     private void sendInlineKeyboard(long chatId) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();

@@ -50,14 +50,22 @@ public class UserDao {
     @SneakyThrows
     public static User addUser(User user) {
         @Cleanup Connection connection = ConnectionManager.getConnection();
-        String sql = "INSERT INTO users(name,status,chat_id,telegram_user_id) VALUES (?,?,?,?)";
+        String sql = """
+                    INSERT INTO users(name,status,chat_id,telegram_user_id)
+                    VALUES (?, ?, ?, ?)
+                """;
         @Cleanup PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, user.getName());
         stmt.setInt(2, user.getStatus());
         stmt.setLong(3, user.getChatId());
         stmt.setLong(4, user.getTelegramUserId());
-        stmt.executeUpdate();
-        return getUserByTelegramId(user.getTelegramUserId());
+        stmt.executeUpdate(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+        //Добавляем добавленный id из таблицы user
+        if (stmt.getGeneratedKeys().next()) {
+            user.setId(stmt.getGeneratedKeys().getInt("id"));
+        }
+        return user;
     }
 
 }
