@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class OpenWeatherMapAPI extends WeatherAPI {
+public class OpenWeatherMapAPI  {
     private final String API_URL = "https://api.openweathermap.org/data/2.5/weather";
     private final String API_KEY;
 
@@ -19,7 +19,7 @@ public class OpenWeatherMapAPI extends WeatherAPI {
         API_KEY = getApiKey();
     }
 
-    @Override
+//    @Override
     public WeatherResponse getWeather(String city) {
         try {
             URI uri = new URIBuilder(API_URL)

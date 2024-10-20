@@ -2,14 +2,18 @@ package api.geocoding;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.Value;
 
-@Value
+@Getter
 @Builder
 public class GeocodingResponse {
-    Double longitude;
-    Double latitude;
-    String city;
-    String country;
-    long cityId;
+    private Double longitude;
+    private Double latitude;
+    private String city;
+    private String country;
+    private long cityId;
+    @Setter
+    private int id;
+
 }

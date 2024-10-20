@@ -6,7 +6,10 @@ import jdbc.User;
 import jdbc.UserDao;
 import lombok.SneakyThrows;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -33,32 +36,45 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        try {
+            if (update.hasMessage() && update.getMessage().hasText()) {
+                String messageText = update.getMessage().getText();
+                long chatId = update.getMessage().getChatId();
+                User user = getUser(update.getMessage().getFrom(), chatId);
+                String response = CommandHandler.getResponse(messageText, user);
+                var inlineKeyboardMarkup = getInlineKeyboard();
 
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
-            String response = CommandHandler.getResponse(messageText);
-            // Записываем историю
-            User user = getUser(update);
-            RequestHistoryDao.insert(messageText, response, user);
-            //отправляем ответ
-//            sendInlineKeyboard(chatId);
-            sendMessage(chatId, response);
-        } else if (update.hasCallbackQuery()) {
-            String callbackQuery = update.getCallbackQuery().getData();
-            System.out.println("Нажата кнопка " + callbackQuery);
+                //отправляем ответ
+                sendMessage(chatId, response, inlineKeyboardMarkup);
 
+            } else if (update.hasCallbackQuery()) {
+                CallbackQuery callbackQuery1 = update.getCallbackQuery();
+                String callbackQuery = callbackQuery1.getData();
+
+                var buttonCommand = ButtonCommand.fromString(callbackQuery);
+                long chatId = callbackQuery1.getMessage().getChatId();
+                User user = getUser(callbackQuery1.getFrom(), chatId);
+                String response = CommandHandler.getResponse(buttonCommand, user);
+                var inlineKeyboardMarkup = getInlineKeyboard();
+
+                //отправляем ответ
+                sendMessage(chatId, response, inlineKeyboardMarkup);
+                execute(new AnswerCallbackQuery(callbackQuery1.getId()));
+
+            }
+        } catch (Exception e) {
+            System.err.println("Ошибка: " + e.getMessage());
+            e.printStackTrace(System.out);
         }
     }
 
-    private User getUser(Update update) {
-        long userId = update.getMessage().getFrom().getId();
+    private User getUser(org.telegram.telegrambots.meta.api.objects.User telegramUser, long chatId) {
+        long userId = telegramUser.getId();
         User user = UserDao.getUserByTelegramId(userId);
         if (user == null) {
-            String firstName = update.getMessage().getFrom().getFirstName();
-            String userName = update.getMessage().getFrom().getUserName();
+            String firstName = telegramUser.getFirstName();
+            String userName = telegramUser.getUserName();
             String Name = firstName.isEmpty() ? userName : firstName;
-            long chatId = update.getMessage().getChatId();
             user = User.builder()
                     .telegramUserId(userId)
                     .name(Name)
@@ -67,40 +83,34 @@ public class TelegramBot extends TelegramLongPollingBot {
             user = UserDao.addUser(user);
 
         }
-
         return user;
     }
 
     @SneakyThrows
-    private void sendMessage(long chatId, String text) {
+    private void sendMessage(long chatId, String text, InlineKeyboardMarkup inlineKeyboardMarkup) {
         SendMessage message = new SendMessage(String.valueOf(chatId), text);
+        message.setReplyMarkup(inlineKeyboardMarkup);
         execute(message);
     }
 
     //TODO сделать кнопки прогноза погоды по часам, по 15мин, на 5 дней
     //TODO автообновление прогноза погоды в чате
-    @SneakyThrows
-    private void sendInlineKeyboard(long chatId) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+    private InlineKeyboardMarkup getInlineKeyboard() {
+        var inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> row1 = new ArrayList<>();
-        row1.add(InlineKeyboardButton.builder().text("Погода сейчас").callbackData("button1").build());
-        row1.add(InlineKeyboardButton.builder().text("Прогноз на сегодня").callbackData("button1").build());
-        row1.add(InlineKeyboardButton.builder().text("Прогноз на 7 дней").callbackData("button2").build());
+        List<InlineKeyboardButton> row2 = new ArrayList<>();
+        row1.add(InlineKeyboardButton.builder().text("Погода сейчас").callbackData("weatherNow").build());
+//        row1.add(InlineKeyboardButton.builder().text("Повторить последний запрос").callbackData("repeatLastRequest").build());
+//        row2.add(InlineKeyboardButton.builder().text("Прогноз на сегодня").callbackData("weatherToday").build());
+//        row2.add(InlineKeyboardButton.builder().text("Прогноз на 7 дней").callbackData("weather7Days").build());
 
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         rows.add(row1);
-
+        rows.add(row2);
         inlineKeyboardMarkup.setKeyboard(rows);
 
-        SendMessage message = SendMessage.builder()
-                .chatId(chatId)
-//                .text("Выберите кнопку:")
-                .replyMarkup(inlineKeyboardMarkup)
-                .build();
-
-        execute(message);
-
+        return inlineKeyboardMarkup;
     }
 
 

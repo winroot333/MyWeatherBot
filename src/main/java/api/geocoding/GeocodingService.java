@@ -9,9 +9,18 @@ public class GeocodingService {
         var geocodingFromDB = GeocodingDao.getGeocoding(cityQuery);
         if (geocodingFromDB.isEmpty()) {
             Optional<GeocodingResponse> geocoding = OpenMeteoGeocodingAPI.getGeocoding(cityQuery);
-            GeocodingDao.insertGeocoding(geocoding.get(), cityQuery);
-            return geocoding;
+            if (geocoding.isPresent()) {
+                int id = GeocodingDao.insertGeocoding(geocoding.get(), cityQuery);
+                geocoding.get().setId(id);
+                return geocoding;
+            } else {
+                return Optional.empty();
+            }
         }
         return geocodingFromDB;
     }
-}
+    public static Optional<GeocodingResponse> getGeocoding(int id) {
+        return GeocodingDao.getGeocoding(id);
+    }
+
+    }

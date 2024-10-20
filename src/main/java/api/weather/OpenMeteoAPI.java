@@ -5,6 +5,7 @@ import api.geocoding.GeocodingResponse;
 import api.geocoding.GeocodingService;
 import api.weather.response.TemperatureData;
 import api.weather.response.WeatherResponse;
+import jdbc.GeocodingDao;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
@@ -24,27 +25,47 @@ public class OpenMeteoAPI extends WeatherAPI {
             Optional<GeocodingResponse> geocoding = GeocodingService.getGeocoding(city);
             if (geocoding.isEmpty())
                 return new WeatherResponse("Город не найден");
-            cityName = geocoding.get().getCity();
-            String current = "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m";
-            String hourly = "temperature_2m,precipitation_probability,precipitation,rain,wind_speed_10m,wind_gusts_10m,relative_humidity_2m";
-            URI uri = new URIBuilder(API_URL)
-                    .addParameter("latitude", geocoding.get().getLatitude().toString())
-                    .addParameter("longitude", geocoding.get().getLongitude().toString())
-                    .addParameter("daily", "weather_code")
-                    .addParameter("current", current)
-                    .addParameter("wind_speed_unit", "ms")
-                    .addParameter("hourly", hourly)
-                    .addParameter("timezone", "Europe/Moscow")
-                    .build();
-
-            String response = APIRequestHandler.request(uri);
-            return parseApiResponse(response, geocoding.get());
+            return getWeatherResponse(geocoding.get());
 
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         } catch (HttpResponseException e) {
             return new WeatherResponse(e.getMessage());
         }
+    }
+
+    @Override
+    public WeatherResponse getWeather(int id) {
+        try {
+            Optional<GeocodingResponse> geocoding = GeocodingDao.getGeocoding(id);
+            if (geocoding.isEmpty())
+                return new WeatherResponse("Город не найден");
+            return getWeatherResponse(geocoding.get());
+
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (HttpResponseException e) {
+            return new WeatherResponse(e.getMessage());
+        }
+
+    }
+
+    private WeatherResponse getWeatherResponse(GeocodingResponse geocoding) throws URISyntaxException, HttpResponseException {
+        cityName = geocoding.getCity();
+        String current = "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m";
+        String hourly = "temperature_2m,precipitation_probability,precipitation,rain,wind_speed_10m,wind_gusts_10m,relative_humidity_2m";
+        URI uri = new URIBuilder(API_URL)
+                .addParameter("latitude", geocoding.getLatitude().toString())
+                .addParameter("longitude", geocoding.getLongitude().toString())
+                .addParameter("daily", "weather_code")
+                .addParameter("current", current)
+                .addParameter("wind_speed_unit", "ms")
+                .addParameter("hourly", hourly)
+                .addParameter("timezone", "Europe/Moscow")
+                .build();
+
+        String response = APIRequestHandler.request(uri);
+        return parseApiResponse(response, geocoding);
     }
 
     private WeatherResponse parseApiResponse(String response, GeocodingResponse geocodingResponse) {

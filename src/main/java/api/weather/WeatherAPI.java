@@ -9,6 +9,7 @@ import java.nio.file.Path;
 
 public abstract class WeatherAPI {
     public abstract WeatherResponse getWeather(String city);
+    public abstract WeatherResponse getWeather(int id);
 
     protected String getDescriptionFromWmoCode(int code, boolean day) {
         String wmoJsonPath = "src/main/resources/wmo_weather_codes.json";
