@@ -68,7 +68,33 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         } catch (Exception e) {
             System.err.println("Ошибка: " + e.getMessage());
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
+            sendErrorMessage(update);
+        }
+    }
+
+    @SneakyThrows
+    private void sendErrorMessage(Update update) {
+        try {
+            String errorString = "Ошибка при обработке запроса, повторите еще раз";
+            if (update.hasMessage() && update.getMessage().hasText()) {
+                long chatId = update.getMessage().getChatId();
+                User user = getUser(update.getMessage().getFrom(), chatId);
+                int messageId = sendMessage(chatId, errorString, null);
+                CommandHandler.writeHistory(update.getMessage().getText(), new Response(errorString), user, messageId);
+
+            } else if (update.hasCallbackQuery()) {
+                CallbackQuery callbackQuery = update.getCallbackQuery();
+                long chatId = callbackQuery.getMessage().getChatId();
+                User user = getUser(callbackQuery.getFrom(), chatId);
+
+                execute(new AnswerCallbackQuery(callbackQuery.getId()));
+                int messageId = sendMessage(chatId, errorString, null);
+                CommandHandler.writeHistory("button " + callbackQuery.getData(), new Response(errorString), user, messageId);
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.err);
         }
     }
 
@@ -93,7 +119,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     @SneakyThrows
     private int sendMessage(long chatId, String text, InlineKeyboardMarkup inlineKeyboardMarkup) {
         SendMessage message = new SendMessage(String.valueOf(chatId), text);
-        message.setReplyMarkup(inlineKeyboardMarkup);
+        if (inlineKeyboardMarkup != null) {
+            message.setReplyMarkup(inlineKeyboardMarkup);
+        }
         Message execute = execute(message);
         return execute.getMessageId();
     }

@@ -100,7 +100,7 @@ public class CommandHandler {
     public static void writeHistory(String request, Response response, User user, long telegramMessageId) {
         int geocodingId = -1;
         WeatherResponse weatherResponse = response.getWeatherResponse();
-        if (weatherResponse.getError() == null) {
+        if (weatherResponse != null && weatherResponse.getError() == null) {
             geocodingId = weatherResponse.getGeocoding().getId();
         }
         RequestHistoryDao.insert(request, response.getText(), user, geocodingId, telegramMessageId);
