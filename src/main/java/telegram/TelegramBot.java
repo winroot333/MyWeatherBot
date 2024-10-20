@@ -41,25 +41,29 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String messageText = update.getMessage().getText();
                 long chatId = update.getMessage().getChatId();
                 User user = getUser(update.getMessage().getFrom(), chatId);
-                String response = CommandHandler.getResponse(messageText, user);
+                Response response = CommandHandler.getResponse(messageText, user);
                 var inlineKeyboardMarkup = getInlineKeyboard();
 
                 //отправляем ответ
-                sendMessage(chatId, response, inlineKeyboardMarkup);
+                int messageId = sendMessage(chatId, response.getText(), inlineKeyboardMarkup);
+                CommandHandler.writeHistory(messageText, response, user, messageId);
+
 
             } else if (update.hasCallbackQuery()) {
-                CallbackQuery callbackQuery1 = update.getCallbackQuery();
-                String callbackQuery = callbackQuery1.getData();
+                CallbackQuery callbackQuery = update.getCallbackQuery();
+                String callbackQueryData = callbackQuery.getData();
 
-                var buttonCommand = ButtonCommand.fromString(callbackQuery);
-                long chatId = callbackQuery1.getMessage().getChatId();
-                User user = getUser(callbackQuery1.getFrom(), chatId);
-                String response = CommandHandler.getResponse(buttonCommand, user);
+                var buttonCommand = ButtonCommand.fromString(callbackQueryData);
+                long chatId = callbackQuery.getMessage().getChatId();
+                long callbackMessageId = callbackQuery.getMessage().getMessageId();
+                User user = getUser(callbackQuery.getFrom(), chatId);
+                Response response = CommandHandler.getResponse(buttonCommand, user, callbackMessageId );
                 var inlineKeyboardMarkup = getInlineKeyboard();
 
                 //отправляем ответ
-                sendMessage(chatId, response, inlineKeyboardMarkup);
-                execute(new AnswerCallbackQuery(callbackQuery1.getId()));
+                int messageId = sendMessage(chatId, response.getText(), inlineKeyboardMarkup);
+                execute(new AnswerCallbackQuery(callbackQuery.getId()));
+                CommandHandler.writeHistory("button " + callbackQueryData, response, user, messageId);
 
             }
         } catch (Exception e) {
@@ -87,10 +91,11 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     @SneakyThrows
-    private void sendMessage(long chatId, String text, InlineKeyboardMarkup inlineKeyboardMarkup) {
+    private int sendMessage(long chatId, String text, InlineKeyboardMarkup inlineKeyboardMarkup) {
         SendMessage message = new SendMessage(String.valueOf(chatId), text);
         message.setReplyMarkup(inlineKeyboardMarkup);
-        execute(message);
+        Message execute = execute(message);
+        return execute.getMessageId();
     }
 
     //TODO сделать кнопки прогноза погоды по часам, по 15мин, на 5 дней

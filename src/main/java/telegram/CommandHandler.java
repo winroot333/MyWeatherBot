@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 
 public class CommandHandler {
 
-    private static String handle(String commandString, User user) {
+    private static Response handle(String commandString, User user) {
         if (commandString == null || commandString.isEmpty()) {
-            return "Команда не найдена";
+            return new Response("Команда не найдена");
         }
 
         String command = commandString.toLowerCase().split(" ")[0];
@@ -28,11 +28,12 @@ public class CommandHandler {
             case "/weather":
                 WeatherResponse weather = weatherAPI.getWeather(arguments);
                 String response = getFormattedWeatherString(weather);
-                    writeHistory(commandString, response, user, weather);
-
-                return response;
+                return Response.builder()
+                        .text(response)
+                        .weatherResponse(weather)
+                        .build();
             default:
-                return "Команда не найдена";
+                return new Response("Команда не найдена");
         }
     }
 
@@ -42,26 +43,27 @@ public class CommandHandler {
                 .collect(Collectors.joining(" "));
     }
 
-    private static String handle(ButtonCommand command, User user) {
+    private static Response handle(ButtonCommand command, User user, long callbackMessageId) {
 
         WeatherAPI weatherAPI = new OpenMeteoAPI();
 
         switch (command) {
             case WEATHER_NOW -> {
 
-                Optional<Integer> lastRequestGeocoding = RequestHistoryDao.getLastRequestGeocoding(user.getId(), true);
+                Optional<Integer> lastRequestGeocoding = RequestHistoryDao.getRequestGeocoding(callbackMessageId);
                 if (lastRequestGeocoding.isPresent()) {
                     var weather = weatherAPI.getWeather(lastRequestGeocoding.get());
-                    String response = getFormattedWeatherString(weather);
-
-                        writeHistory(command.getCommand(), response, user, weather);
+                    String responseText = getFormattedWeatherString(weather);
+                    Response response = Response.builder()
+                            .weatherResponse(weather)
+                            .text(responseText)
+                            .build();
 
 
                     return response;
 
 
-                }
-                else return "Город не найден";
+                } else new Response("Команда не найдена");
 
 
             }
@@ -76,10 +78,10 @@ public class CommandHandler {
             }
 
             case null, default -> {
-                return "Команда не найдена";
+                return new Response("Команда не найдена");
             }
         }
-        return "Комманда не найдена";
+        return new Response("Команда не найдена");
     }
 
     private static String getFormattedWeatherString(WeatherResponse weather) {
@@ -91,19 +93,20 @@ public class CommandHandler {
         return str.formatted(weather.getGeocoding().getCity(), temperature.getDescription(), temperature.getTemperature(), temperature.getHumidity(), temperature.getWindSpeed(), temperature.getWindGusts());
     }
 
-    public static String getResponse(String messageText, User user) {
+    public static Response getResponse(String messageText, User user) {
         return handle(messageText, user);
     }
 
-    private static void writeHistory(String request, String response, User user, WeatherResponse weatherResponse) {
+    public static void writeHistory(String request, Response response, User user, long telegramMessageId) {
         int geocodingId = -1;
-        if (weatherResponse.getError() == null){
+        WeatherResponse weatherResponse = response.getWeatherResponse();
+        if (weatherResponse.getError() == null) {
             geocodingId = weatherResponse.getGeocoding().getId();
         }
-        RequestHistoryDao.insert(request, response, user, geocodingId);
+        RequestHistoryDao.insert(request, response.getText(), user, geocodingId, telegramMessageId);
     }
 
-    public static String getResponse(ButtonCommand buttonCommand, User user) {
-        return handle(buttonCommand, user);
+    public static Response getResponse(ButtonCommand buttonCommand, User user, long callbackMessageId) {
+        return handle(buttonCommand, user, callbackMessageId);
     }
 }
