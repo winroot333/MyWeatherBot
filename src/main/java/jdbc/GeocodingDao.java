@@ -4,10 +4,7 @@ import api.geocoding.GeocodingResponse;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Optional;
 
 public class GeocodingDao {
@@ -63,13 +60,13 @@ public class GeocodingDao {
         //Если не нашли то вставляем
         if (geocodingDataId == -1) {
             String sql = "INSERT INTO geocoding_data (longitude, latitude, city, city_id, country) VALUES (?, ?, ?,?,?);";
-            @Cleanup PreparedStatement stmt = connection.prepareStatement(sql);
+            @Cleanup PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS );
             stmt.setDouble(1, geocoding.getLongitude());
             stmt.setDouble(2, geocoding.getLatitude());
             stmt.setString(3, geocoding.getCity());
             stmt.setLong(4, geocoding.getCityId());
             stmt.setString(5, geocoding.getCountry());
-            stmt.executeUpdate(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            stmt.executeUpdate();
             //Добавляем добавленный id из таблицы
             if (stmt.getGeneratedKeys().next()) {
                 geocodingDataId = stmt.getGeneratedKeys().getInt("id");
